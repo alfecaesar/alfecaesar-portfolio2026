@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import ReactGA from 'react-ga4';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import About from './pages/About';
@@ -10,6 +11,7 @@ import Admin from './pages/Admin';
 import type { Page } from './types';
 
 const validPages: Page[] = ['about', 'portfolio', 'history', 'contact', 'admin'];
+const GA_MEASUREMENT_ID = 'G-812DH8HPLP';
 
 function getInitialPage(): Page {
   const hash = window.location.hash.replace('#', '') as Page;
@@ -21,6 +23,7 @@ export default function App() {
   const [displayedPage, setDisplayedPage] = useState<Page>(getInitialPage);
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const hasMountedRef = useRef(false);
+  const gaReadyRef = useRef(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const stored = window.localStorage.getItem('theme');
     if (stored === 'dark' || stored === 'light') {
@@ -28,6 +31,16 @@ export default function App() {
     }
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   });
+
+  useEffect(() => {
+    ReactGA.initialize(GA_MEASUREMENT_ID);
+    gaReadyRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!gaReadyRef.current) return;
+    ReactGA.send({ hitType: 'pageview', page: `/${currentPage}` });
+  }, [currentPage]);
 
   useEffect(() => {
     const onHashChange = () => {
