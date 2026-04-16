@@ -100,3 +100,199 @@ html[data-theme='light'] .hover\:bg-white\/5:hover {
 .theme-text-muted {
   color: var(--text-muted);
 }
+
+.name-char {
+  --char-mag: 0;
+  --char-delay: 0s;
+  display: inline-block;
+  transition:
+    transform 150ms linear,
+    color 180ms ease,
+    text-shadow 180ms ease;
+  transform: translateY(calc(var(--char-mag) * -9px)) scale(calc(1 + var(--char-mag) * 0.22));
+  text-shadow: 0 0 calc(var(--char-mag) * 18px) rgba(56, 189, 248, calc(var(--char-mag) * 0.95));
+  color: color-mix(in srgb, var(--text-strong) calc(100% - (var(--char-mag) * 32%)), #7dd3fc calc(var(--char-mag) * 32%));
+  animation: name-idle-float 2.6s ease-in-out infinite;
+  animation-delay: var(--char-delay);
+}
+
+@keyframes portfolio-thumb-slow-zoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.portfolio-thumb-slow-zoom {
+  animation: portfolio-thumb-slow-zoom 14s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.portfolio-grid-focus:hover .portfolio-focus-card {
+  filter: blur(1.4px) saturate(0.78) brightness(0.8);
+  opacity: 0.72;
+}
+
+.portfolio-grid-focus:hover .portfolio-focus-card:hover {
+  filter: none;
+  opacity: 1;
+}
+
+@keyframes name-idle-float {
+  0%,
+  100% {
+    transform: translateY(calc(var(--char-mag) * -9px)) scale(calc(1 + var(--char-mag) * 0.22));
+  }
+  50% {
+    transform: translateY(calc((var(--char-mag) * -9px) - 1.5px)) scale(calc(1 + var(--char-mag) * 0.22));
+  }
+}
+
+.page-loader-shell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.36);
+  background: rgba(13, 13, 13, 0.74);
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.2);
+  backdrop-filter: blur(7px);
+}
+
+.page-loader-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(56, 189, 248, 0.1), transparent 40%),
+    rgba(2, 6, 23, 0.42);
+  backdrop-filter: blur(2px);
+  animation: loader-overlay-fade 220ms ease-out;
+}
+
+.page-loader-core {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #38bdf8;
+  box-shadow: 0 0 0 rgba(56, 189, 248, 0.55);
+  animation: loader-ping 1.15s ease-out infinite;
+}
+
+.page-loader-core::before,
+.page-loader-core::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.36);
+  inset: -4px;
+  animation: loader-ring 1.15s ease-out infinite;
+}
+
+.page-loader-core::after {
+  animation-delay: 0.32s;
+}
+
+.page-loader-text {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bae6fd;
+  animation: loader-fade 1.15s ease-in-out infinite;
+}
+
+@keyframes loader-ping {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.45);
+  }
+  65% {
+    transform: scale(1);
+    box-shadow: 0 0 0 11px rgba(56, 189, 248, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+@keyframes loader-ring {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.82);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.62);
+  }
+}
+
+@keyframes loader-fade {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-0.5px);
+  }
+}
+
+@keyframes loader-overlay-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+html[data-theme='light'] .page-loader-shell {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(14, 165, 233, 0.35);
+}
+
+html[data-theme='light'] .page-loader-text {
+  color: #0369a1;
+}
+
+html[data-theme='light'] .page-loader-overlay {
+  background:
+    radial-gradient(circle at 50% 12%, rgba(14, 165, 233, 0.1), transparent 42%),
+    rgba(241, 245, 249, 0.58);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-thumb-slow-zoom {
+    animation: none !important;
+  }
+
+  .portfolio-grid-focus:hover .portfolio-focus-card,
+  .portfolio-grid-focus:hover .portfolio-focus-card:hover {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  .name-char {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    text-shadow: none !important;
+  }
+
+  .page-loader-overlay,
+  .page-loader-core,
+  .page-loader-core::before,
+  .page-loader-core::after,
+  .page-loader-text {
+    animation: none !important;
+  }
+}

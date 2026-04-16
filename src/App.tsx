@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
@@ -18,6 +18,9 @@ function getInitialPage(): Page {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>(getInitialPage);
+  const [displayedPage, setDisplayedPage] = useState<Page>(getInitialPage);
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const hasMountedRef = useRef(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const stored = window.localStorage.getItem('theme');
     if (stored === 'dark' || stored === 'light') {
@@ -36,6 +39,22 @@ export default function App() {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true;
+      setDisplayedPage(currentPage);
+      return;
+    }
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const transitionMs = reducedMotion ? 180 : 520;
+    setIsPageTransitioning(true);
+    const timer = window.setTimeout(() => {
+      setDisplayedPage(currentPage);
+      setIsPageTransitioning(false);
+    }, transitionMs);
+    return () => window.clearTimeout(timer);
+  }, [currentPage]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -61,12 +80,23 @@ export default function App() {
         {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
       </button>
       <Nav currentPage={currentPage} navigate={navigate} />
+      {isPageTransitioning && (
+        <div className="fixed inset-0 z-[70] pointer-events-none">
+          <div className="page-loader-overlay" />
+          <div className="absolute inset-0 flex items-start justify-center pt-24 sm:pt-28">
+            <div className="page-loader-shell">
+              <div className="page-loader-core" />
+              <span className="page-loader-text">Loading page...</span>
+            </div>
+          </div>
+        </div>
+      )}
       <main className="relative">
-        {currentPage === 'about' && <About />}
-        {currentPage === 'portfolio' && <Portfolio />}
-        {currentPage === 'history' && <History />}
-        {currentPage === 'contact' && <Contact />}
-        {currentPage === 'admin' && <Admin />}
+        {displayedPage === 'about' && <About />}
+        {displayedPage === 'portfolio' && <Portfolio />}
+        {displayedPage === 'history' && <History />}
+        {displayedPage === 'contact' && <Contact />}
+        {displayedPage === 'admin' && <Admin />}
       </main>
       <Footer />
     </div>

@@ -1,17 +1,22 @@
 import { Github, Mail, Phone, MapPin, ExternalLink, Briefcase, Rocket, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { useMemo, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import { useSiteData } from '../lib/siteData';
 import { usePageAnimations } from '../lib/usePageAnimations';
 
 function SkillBar({ name, level }: { name: string; level: number }) {
   return (
-    <div className="flex items-center gap-3 p-3.5 rounded-lg border border-white/5 bg-white/[0.02]">
+    <div className="group flex items-center gap-3 p-3.5 rounded-lg border border-white/5 bg-white/[0.02] transition-colors duration-200 hover:border-sky-400/25">
       <span className="text-[13px] sm:text-sm text-gray-400 w-40 sm:w-44 shrink-0">{name}</span>
       <div className="flex gap-1.5">
         {Array.from({ length: 5 }).map((_, i) => (
           <span
             key={i}
-            className={`w-2 h-2 rounded-full ${
-              i < level ? 'bg-sky-400' : 'bg-white/10'
+            style={{ transitionDelay: `${i * 28}ms` }}
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              i < level
+                ? 'bg-sky-400 group-hover:scale-125 group-hover:shadow-[0_0_10px_rgba(56,189,248,0.95)] group-hover:animate-pulse'
+                : 'bg-white/10 group-hover:bg-sky-300/25 group-hover:scale-110'
             }`}
           />
         ))}
@@ -24,15 +29,51 @@ export default function About() {
   const { data } = useSiteData();
   const { profile, skills, cms, languages, techExpertise, profileBadges } = data;
   const rootRef = usePageAnimations<HTMLDivElement>();
+  const nameChars = useMemo(() => Array.from(profile.name), [profile.name]);
+  const nameRef = useRef<HTMLHeadingElement | null>(null);
+
+  function handleNameMouseMove(e: React.MouseEvent<HTMLHeadingElement>) {
+    if (!nameRef.current) return;
+    const letters = nameRef.current.querySelectorAll<HTMLElement>('[data-name-char]');
+    letters.forEach((letter) => {
+      const rect = letter.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+      const range = 120;
+      const intensity = Math.max(0, 1 - distance / range);
+      letter.style.setProperty('--char-mag', intensity.toFixed(3));
+    });
+  }
+
+  function handleNameMouseLeave() {
+    if (!nameRef.current) return;
+    const letters = nameRef.current.querySelectorAll<HTMLElement>('[data-name-char]');
+    letters.forEach((letter) => letter.style.setProperty('--char-mag', '0'));
+  }
 
   return (
     <div ref={rootRef} className="pt-24 pb-16">
       <div className="max-w-5xl mx-auto px-6">
-        <section data-animate className="relative min-h-[58vh] md:min-h-[60vh] flex flex-col justify-center py-14 md:py-16 overflow-hidden">
+        <section data-animate className="relative min-h-[58vh] md:min-h-[60vh] flex flex-col justify-center py-14 md:py-16 overflow-visible">
 
           <p className="text-sky-400 text-[11px] sm:text-xs tracking-[0.2em] uppercase mb-4">Hello, I am</p>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold theme-text-strong leading-tight mb-4">
-            {profile.name}
+          <h1
+            ref={nameRef}
+            onMouseMove={handleNameMouseMove}
+            onMouseLeave={handleNameMouseLeave}
+            className="text-4xl sm:text-5xl md:text-7xl font-bold theme-text-strong leading-tight mb-4 select-none overflow-visible py-2 pr-2 -my-2"
+          >
+            {nameChars.map((char, index) => (
+              <span
+                key={`${char}-${index}`}
+                data-name-char
+                className={`name-char ${char === ' ' ? 'inline-block w-[0.32em]' : ''}`}
+                style={{ '--char-delay': `${index * 0.018}s` } as CSSProperties}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+            ))}
           </h1>
           <h2 className="text-lg sm:text-xl md:text-2xl theme-text-muted font-light mb-7 md:mb-8">{profile.title}</h2>
           <p className="theme-text-body max-w-2xl leading-relaxed text-[15px] sm:text-base mb-9 md:mb-10">
