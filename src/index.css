@@ -101,6 +101,148 @@ html[data-theme='light'] .hover\:bg-white\/5:hover {
   color: var(--text-muted);
 }
 
+.hero-layout {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  grid-template-areas:
+    'photo kicker'
+    'photo name'
+    'title title'
+    'summary summary'
+    'stats stats'
+    'actions actions'
+    'meta meta';
+  column-gap: 0.9rem;
+  row-gap: 0.2rem;
+  align-items: center;
+}
+
+.hero-kicker {
+  grid-area: kicker;
+  align-self: end;
+}
+
+.hero-name {
+  grid-area: name;
+  align-self: start;
+  margin: 0;
+  padding: 0.15rem 0;
+}
+
+.hero-name-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-title {
+  grid-area: title;
+  margin: 0.85rem 0 0;
+}
+
+.hero-portrait {
+  grid-area: photo;
+  width: 5.5rem;
+  align-self: center;
+}
+
+.hero-portrait-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 50% 12%;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+
+.hero-summary {
+  grid-area: summary;
+  margin: 1.35rem 0 0;
+}
+
+.hero-stats {
+  grid-area: stats;
+  margin: 1.5rem 0 0;
+}
+
+.hero-actions {
+  grid-area: actions;
+  margin: 1.5rem 0 0;
+}
+
+.hero-meta {
+  grid-area: meta;
+  margin: 1.5rem 0 0;
+}
+
+@media (min-width: 768px) {
+  .hero-layout {
+    grid-template-columns: minmax(0, 1fr) 13.75rem;
+    grid-template-areas:
+      'kicker photo'
+      'name photo'
+      'title photo'
+      'summary photo'
+      'stats photo'
+      'actions photo'
+      'meta photo';
+    column-gap: 2.5rem;
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .hero-kicker {
+    margin-bottom: 1rem;
+  }
+
+  .hero-name {
+    margin-bottom: 1rem;
+    padding: 0.5rem 0.5rem 0.5rem 0;
+  }
+
+  .hero-title {
+    margin: 0 0 1.75rem;
+  }
+
+  .hero-portrait {
+    width: 13.75rem;
+    align-self: center;
+  }
+
+  .hero-portrait-image {
+    aspect-ratio: 4 / 5;
+    border-radius: 1.25rem;
+  }
+
+  .hero-summary,
+  .hero-stats,
+  .hero-actions,
+  .hero-meta {
+    margin-top: 0;
+  }
+
+  .hero-summary {
+    margin-bottom: 2.25rem;
+  }
+
+  .hero-stats,
+  .hero-actions {
+    margin-bottom: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-layout {
+    grid-template-columns: minmax(0, 1fr) 17.5rem;
+    column-gap: 3.5rem;
+  }
+
+  .hero-portrait {
+    width: 17.5rem;
+  }
+}
+
 .name-char {
   --char-mag: 0;
   --char-delay: 0s;

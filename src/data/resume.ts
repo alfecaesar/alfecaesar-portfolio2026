@@ -7,6 +7,7 @@ export const profile = {
   github: 'alfecaesar',
   githubUrl: 'https://github.com/alfecaesar',
   portfolioUrl: 'https://alfecaesar.github.io/online-cv/',
+  avatarUrl: 'https://tenayrdhmsvcgkxkoqhk.supabase.co/storage/v1/object/public/assets/others/avatar.png',
   summary:
     'Front-end Web Developer specializing in Shopify theme development and WordPress theme and plugin development. Experienced in translating designs into clean, scalable, and maintainable code, with a strong focus on performance, usability, and customization. Detail-oriented, self-driven, and highly capable of solving complex front-end challenges.',
 };

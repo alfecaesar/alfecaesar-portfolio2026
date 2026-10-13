@@ -29,7 +29,7 @@ export default function About() {
   const { data } = useSiteData();
   const { profile, skills, cms, languages, techExpertise, profileBadges } = data;
   const rootRef = usePageAnimations<HTMLDivElement>();
-  const nameChars = useMemo(() => Array.from(profile.name), [profile.name]);
+  const nameWords = useMemo(() => profile.name.split(' '), [profile.name]);
   const nameRef = useRef<HTMLHeadingElement | null>(null);
 
   function handleNameMouseMove(e: React.MouseEvent<HTMLHeadingElement>) {
@@ -55,83 +55,105 @@ export default function About() {
   return (
     <div ref={rootRef} className="pt-24 pb-16">
       <div className="max-w-5xl mx-auto px-6">
-        <section data-animate className="relative min-h-[58vh] md:min-h-[60vh] flex flex-col justify-center py-14 md:py-16 overflow-visible">
+        <section data-animate className="relative min-h-[58vh] md:min-h-[60vh] flex flex-col justify-center py-10 sm:py-14 md:py-16 overflow-visible">
+          <div className="hero-layout">
+            <p className="hero-kicker text-sky-400 text-[11px] sm:text-xs tracking-[0.2em] uppercase">Hello, I am</p>
+            <h1
+              ref={nameRef}
+              onMouseMove={handleNameMouseMove}
+              onMouseLeave={handleNameMouseLeave}
+              className="hero-name text-[1.65rem] leading-[1.15] sm:text-5xl md:text-7xl font-bold theme-text-strong select-none overflow-visible"
+            >
+              {nameWords.map((word, wordIndex) => (
+                <span key={`${word}-${wordIndex}`} className="hero-name-word">
+                  {Array.from(word).map((char, charIndex) => {
+                    const index = nameWords.slice(0, wordIndex).join(' ').length + (wordIndex > 0 ? 1 : 0) + charIndex;
+                    return (
+                      <span
+                        key={`${char}-${index}`}
+                        data-name-char
+                        className="name-char"
+                        style={{ '--char-delay': `${index * 0.018}s` } as CSSProperties}
+                      >
+                        {char}
+                      </span>
+                    );
+                  })}
+                  {wordIndex < nameWords.length - 1 ? '\u00A0' : null}
+                </span>
+              ))}
+            </h1>
+            <h2 className="hero-title text-base sm:text-xl md:text-2xl theme-text-muted font-light">{profile.title}</h2>
 
-          <p className="text-sky-400 text-[11px] sm:text-xs tracking-[0.2em] uppercase mb-4">Hello, I am</p>
-          <h1
-            ref={nameRef}
-            onMouseMove={handleNameMouseMove}
-            onMouseLeave={handleNameMouseLeave}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold theme-text-strong leading-tight mb-4 select-none overflow-visible py-2 pr-2 -my-2"
-          >
-            {nameChars.map((char, index) => (
-              <span
-                key={`${char}-${index}`}
-                data-name-char
-                className={`name-char ${char === ' ' ? 'inline-block w-[0.32em]' : ''}`}
-                style={{ '--char-delay': `${index * 0.018}s` } as CSSProperties}
+            <div className="hero-portrait">
+              <img
+                src={profile.avatarUrl}
+                alt={`Portrait of ${profile.name}`}
+                width={560}
+                height={700}
+                fetchPriority="high"
+                decoding="async"
+                className="hero-portrait-image"
+              />
+            </div>
+
+            <p className="hero-summary theme-text-body max-w-2xl leading-relaxed text-[15px] sm:text-base">
+              {profile.summary}
+            </p>
+
+            <div className="hero-stats grid sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl">
+              <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
+                <Briefcase size={16} className="text-sky-400 mb-2" />
+                <p className="theme-text-strong text-sm font-medium">15+ Years Experience</p>
+                <p className="text-xs theme-text-muted mt-1">Web, Shopify, WordPress</p>
+              </div>
+              <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
+                <Rocket size={16} className="text-sky-400 mb-2" />
+                <p className="theme-text-strong text-sm font-medium">Performance Focused</p>
+                <p className="text-xs theme-text-muted mt-1">Fast, scalable front-end</p>
+              </div>
+              <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
+                <ShieldCheck size={16} className="text-sky-400 mb-2" />
+                <p className="theme-text-strong text-sm font-medium">Production Ready</p>
+                <p className="text-xs theme-text-muted mt-1">Testing and stability first</p>
+              </div>
+            </div>
+
+            <div className="hero-actions flex flex-wrap gap-3 sm:gap-4">
+              <a
+                href={`mailto:${profile.email}`}
+                data-hover-lift
+                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-sky-400 text-[#0d0d0d] text-[13px] sm:text-sm font-semibold rounded-xl hover:bg-sky-300 transition-colors duration-200"
               >
-                {char === ' ' ? '\u00A0' : char}
+                <Mail size={15} />
+                Get In Touch
+              </a>
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-hover-lift
+                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 border border-white/10 text-gray-300 text-[13px] sm:text-sm font-medium rounded-xl hover:border-sky-400/50 hover:text-sky-400 transition-colors duration-200"
+              >
+                <Github size={15} />
+                GitHub
+              </a>
+            </div>
+
+            <div className="hero-meta flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 text-[13px] sm:text-sm theme-text-muted">
+              <span className="flex items-center gap-2">
+                <Mail size={14} className="text-sky-400/70" />
+                {profile.email}
               </span>
-            ))}
-          </h1>
-          <h2 className="text-lg sm:text-xl md:text-2xl theme-text-muted font-light mb-7 md:mb-8">{profile.title}</h2>
-          <p className="theme-text-body max-w-2xl leading-relaxed text-[15px] sm:text-base mb-9 md:mb-10">
-            {profile.summary}
-          </p>
-
-          <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 mb-9 md:mb-10 max-w-3xl">
-            <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
-              <Briefcase size={16} className="text-sky-400 mb-2" />
-              <p className="theme-text-strong text-sm font-medium">15+ Years Experience</p>
-              <p className="text-xs theme-text-muted mt-1">Web, Shopify, WordPress</p>
+              <span className="flex items-center gap-2">
+                <Phone size={14} className="text-sky-400/70" />
+                {profile.phone}
+              </span>
+              <span className="flex items-center gap-2">
+                <MapPin size={14} className="text-sky-400/70" />
+                {profile.location}
+              </span>
             </div>
-            <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
-              <Rocket size={16} className="text-sky-400 mb-2" />
-              <p className="theme-text-strong text-sm font-medium">Performance Focused</p>
-              <p className="text-xs theme-text-muted mt-1">Fast, scalable front-end</p>
-            </div>
-            <div data-hover-lift className="p-4 sm:p-4.5 rounded-xl border border-white/10 bg-white/[0.03] theme-surface-soft">
-              <ShieldCheck size={16} className="text-sky-400 mb-2" />
-              <p className="theme-text-strong text-sm font-medium">Production Ready</p>
-              <p className="text-xs theme-text-muted mt-1">Testing and stability first</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 sm:gap-4 mb-9 md:mb-10">
-            <a
-              href={`mailto:${profile.email}`}
-              data-hover-lift
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 bg-sky-400 text-[#0d0d0d] text-[13px] sm:text-sm font-semibold rounded-xl hover:bg-sky-300 transition-colors duration-200"
-            >
-              <Mail size={15} />
-              Get In Touch
-            </a>
-            <a
-              href={profile.githubUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-hover-lift
-              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 border border-white/10 text-gray-300 text-[13px] sm:text-sm font-medium rounded-xl hover:border-sky-400/50 hover:text-sky-400 transition-colors duration-200"
-            >
-              <Github size={15} />
-              GitHub
-            </a>
-          </div>
-
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 text-[13px] sm:text-sm theme-text-muted">
-            <span className="flex items-center gap-2">
-              <Mail size={14} className="text-sky-400/70" />
-              {profile.email}
-            </span>
-            <span className="flex items-center gap-2">
-              <Phone size={14} className="text-sky-400/70" />
-              {profile.phone}
-            </span>
-            <span className="flex items-center gap-2">
-              <MapPin size={14} className="text-sky-400/70" />
-              {profile.location}
-            </span>
           </div>
         </section>
 
