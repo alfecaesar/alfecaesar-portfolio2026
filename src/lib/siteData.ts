@@ -156,6 +156,7 @@ async function fetchSiteData(): Promise<SiteData> {
             githubUrl: (profileRes.data as ProfileRow).github_url,
             portfolioUrl: (profileRes.data as ProfileRow).portfolio_url,
             summary: (profileRes.data as ProfileRow).summary,
+            avatarUrl: fallbackProfile.avatarUrl,
           },
     experience:
       experienceRes.error || !experienceRes.data || experienceRes.data.length === 0
